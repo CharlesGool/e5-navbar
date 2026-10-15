@@ -6,6 +6,12 @@
 
 容悦 E5（OpenWrt）信息屏应用。当前版本 **v1.4**，应用 ID `navbar`。
 
+## 截图
+
+<img src="screenshots/navbar.png" alt="底部导航显示全部 9 个页面" width="320">
+
+底部导航显示全部 9 个页面：概览、信号、流量、短信、热点、设备、详情、设置、应用。
+
 ## 安装
 
 1. 下载 [`releases/navbar-v1.4.tar.gz`](releases/navbar-v1.4.tar.gz)。

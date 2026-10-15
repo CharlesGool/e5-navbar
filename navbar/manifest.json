@@ -1,0 +1,20 @@
+{
+	"id": "navbar",
+	"api_version": 2,
+	"version": "1.4",
+	"name": { "zh": "底部导航", "en": "Bottom Bar" },
+	"description": { "zh": "底部导航显示全部 9 个页面", "en": "All nine pages in the bottom bar" },
+	"entry": "index.html",
+	"order": 47,
+	"notifications": true,
+	"settings": [
+		{
+			"id": "mode", "type": "choice", "uci": "e5-plugin-navbar.settings.mode", "default": "all",
+			"label": { "zh": "底部导航", "en": "Bottom bar" },
+			"options": [
+				{ "value": "all", "label": { "zh": "全部 9 个页面", "en": "All nine pages" } },
+				{ "value": "five", "label": { "zh": "5 个（原样）", "en": "Five (unchanged)" } }
+			]
+		}
+	]
+}

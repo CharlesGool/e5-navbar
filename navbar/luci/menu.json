@@ -1,0 +1,5 @@
+{
+  "admin/services/e5-infoscreen/navigation": {
+    "action": { "type": "view", "path": "e5-navbar/navigation" }
+  }
+}

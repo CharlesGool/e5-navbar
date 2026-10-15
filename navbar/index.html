@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<style>
+	html, body { margin: 0; background: #0b0e13; color: #e8ecf2;
+		font-family: "Noto Sans CJK SC", "DejaVu Sans", sans-serif; user-select: none; cursor: none; }
+	body { padding: 8px; }
+	.card { background: #161b23; border-radius: 10px; padding: 9px 11px; margin-bottom: 7px; }
+	.row { display: flex; justify-content: space-between; align-items: baseline; }
+	.sub { color: #8b95a5; font-size: 12px; line-height: 1.5; }
+	.val { font-weight: bold; }
+	.good { color: #3ccf7a; } .fair { color: #f2c14b; } .poor { color: #f0625a; }
+	button { font: inherit; color: #e8ecf2; background: #232a35; border: 0; border-radius: 8px;
+		padding: 9px; width: 100%; outline: none; margin-bottom: 6px; }
+	button.on { background: #1f4d36; }
+	button:focus { box-shadow: 0 0 0 2px #fff; }
+</style>
+</head>
+<body>
+<div class="card" id="state"></div>
+<div id="modes"></div>
+<div class="sub" id="note"></div>
+<script src="/sdk/e5.js"></script>
+<script>
+'use strict';
+// 底部导航: the setting and the patch of the screen's mobile.js; up/down
+// choose, confirm sets.
+const $ = (id) => document.getElementById(id);
+const MODES = [
+	{ all: true, label: { zh: '全部 9 个页面', en: 'All nine pages' } },
+	{ all: false, label: { zh: '5 个（原样）', en: 'Five (unchanged)' } }
+];
+let st = null, focus = 0, busy = false, loadError = null;
+
+function esc(s) {
+	return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function draw() {
+	if (!st) {
+		$('state').innerHTML = loadError
+			? `<div class="sub poor">${e5.t({ zh: '读取失败：', en: 'Cannot load: ' })}${esc(loadError)}</div>`
+			: `<div class="sub">${e5.t({ zh: '读取中…', en: 'Loading…' })}</div>`;
+		return;
+	}
+	const p = st.patch ?? {};
+	const patch = p.restarting ? [e5.t({ zh: '已安装，屏幕即将重启', en: 'Installed, the screen restarts' }), 'fair']
+		: p.patched && p.current !== false ? [e5.t({ zh: '已生效', en: 'Active' }), 'good']
+		: p.patched ? [e5.t({ zh: '旧版本，正在更新', en: 'Older, updating' }), 'fair']
+		: [e5.t({ zh: '未生效', en: 'Not active' }), 'poor'];
+	$('state').innerHTML =
+		`<div class="row"><span>${e5.t({ zh: '界面补丁', en: 'Screen patch' })}</span><span class="val ${patch[1]}">${patch[0]}</span></div>` +
+		(p.error ? `<div class="sub">${esc(p.error)}</div>` : '');
+	$('modes').innerHTML = MODES.map((m, i) =>
+		`<button data-i="${i}" class="${st.all == m.all ? 'on' : ''}">${st.all == m.all ? '● ' : ''}${e5.t(m.label)}</button>`).join('');
+	$('modes').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => choose(+b.dataset.i)));
+	const btn = $('modes').querySelectorAll('button')[focus];
+	if (btn) btn.focus();
+	$('note').textContent = e5.t({
+		zh: '“全部 9 个”时底部导航依次是：概览、信号、流量、短信、热点、设备、详细信息、设置、应用。改了以后最多 30 秒生效。“5 个”时按 设置 里的导航位显示。',
+		en: 'All nine: Home, Signal, Usage, Messages, Hotspot, Device, Details, Settings, Apps; a change shows within 30 s. Five: the slots chosen in Settings.'
+	});
+}
+
+async function load() {
+	try { st = await e5.api('/status'); loadError = null; }
+	catch (e) { loadError = e.message || String(e); }
+	draw();
+}
+
+async function choose(i) {
+	if (busy) return;
+	busy = true;
+	focus = i;
+	try { const r = await e5.api('/mode', { body: { all: MODES[i].all } }); st = { ...st, ...r }; }
+	catch (e) { e5.toast(e.message); }
+	busy = false;
+	draw();
+}
+
+e5.onKey((k) => {
+	if (k.kind == 'up' || k.kind == 'down') { focus = 1 - focus; draw(); return true; }
+	if (k.kind == 'ok') { choose(focus); return true; }
+	return false;
+});
+draw();
+load().then(() => { focus = st && st.all === false ? 1 : 0; draw(); });
+</script>
+</body>
+</html>

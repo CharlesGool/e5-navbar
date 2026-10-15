@@ -1,7 +1,7 @@
 {
 	"id": "navbar",
 	"api_version": 2,
-	"version": "1.0",
+	"version": "1.3",
 	"name": { "zh": "底部导航", "en": "Bottom Bar" },
 	"description": { "zh": "底部导航显示全部 9 个页面", "en": "All nine pages in the bottom bar" },
 	"entry": "index.html",

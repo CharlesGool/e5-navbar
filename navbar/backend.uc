@@ -2,7 +2,9 @@
 // instead of five.  The bar is built by the screen's own mobile.js
 // (navigation(): the five nav_slot pages), so this patches mobile.js with
 // patch.js: navigation() then asks GET /mode and shows all nine when it says
-// so.  An image update brings an unpatched mobile.js: the notification poll
+// so; while it does, the screen's own 高级 -> 底部导航 (the five) is left out of
+// the 高级 list (patch.js, in the page: settings.uc is not changed).  An image
+// update brings an unpatched mobile.js: the notification poll
 // patches it again, and the screen restarts once after each patch.  With the
 // app removed, /mode is gone and the bar has its five again.
 //

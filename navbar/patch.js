@@ -11,13 +11,55 @@
                 .then((r) => r.ok ? r.json() : null)
                 .then((r) => {
                     const all = !!(r && r.all);
-                    if (all !== navbarAll) { navbarAll = all; navKey = ''; navigation(); }
+                    if (all !== navbarAll) {
+                        navbarAll = all; navKey = ''; navigation();
+                        // 高级, if already read: its 底部导航 out or back in
+                        try {
+                            if (typeof stCats != 'undefined' && Array.isArray(stCats)) {
+                                e5NavbarCats(stCats);
+                                if (stTop()?.view == 'menu') stRender();
+                            }
+                        } catch (e) {}
+                    }
                 })
                 .catch(() => {});
         }
         return navbarAll;
     }
     setInterval(e5NavbarAll, 30000);
+    // With all nine the screen's own 高级 -> 底部导航 (its five nav_slot ones,
+    // category "navigation") sets nothing that shows: out of the 高级 list
+    // while all nine show, back in its place with five.  The list as app.js
+    // reads it (pageRead('/api/settings')), changed in place.
+    let navbarHidden = null;
+    function e5NavbarCats(cats) {
+        try {
+            const i = cats.findIndex((c) => c && c.id === 'navigation');
+            if (navbarAll && i >= 0) {
+                navbarHidden = { cat: cats[i], at: i };
+                cats.splice(i, 1);
+            } else if (!navbarAll && i < 0 && navbarHidden) {
+                cats.splice(Math.min(navbarHidden.at, cats.length), 0, navbarHidden.cat);
+                navbarHidden = null;
+            }
+        } catch (e) {}
+        return cats;
+    }
+    // (app.js comes after this file: its pageRead is there once the page has loaded)
+    window.addEventListener('DOMContentLoaded', () => {
+        try {
+            const read = window.pageRead;
+            if (typeof read != 'function') return;
+            window.pageRead = function (path) {
+                const p = read.apply(this, arguments);
+                if (path !== '/api/settings') return p;
+                return p.then((r) => {
+                    if (r && Array.isArray(r.categories)) e5NavbarCats(r.categories);
+                    return r;
+                });
+            };
+        } catch (e) {}
+    });
     // nine to a row: a little less room around each button and its label
     (function () {
         const style = document.createElement('style');

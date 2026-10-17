@@ -1,0 +1,17 @@
+{
+  "luci-app-e5-navbar": {
+    "description": "The bottom bar: all nine pages or the screen's five (e5-plugin-navbar)",
+    "read": {
+      "uci": [
+        "e5-plugin-navbar",
+        "e5-infoscreen"
+      ]
+    },
+    "write": {
+      "uci": [
+        "e5-plugin-navbar",
+        "e5-infoscreen"
+      ]
+    }
+  }
+}

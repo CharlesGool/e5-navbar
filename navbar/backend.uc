@@ -39,7 +39,8 @@ const KEY_NEW = "        const navAll = e5NavbarAll();\n" +
 	"        const key = items.join(',');";
 const LUCI = [
 	[ 'luci/navigation.js', '/www/luci-static/resources/view/e5-navbar/navigation.js' ],
-	[ 'luci/menu.json', '/usr/share/luci/menu.d/luci-app-zz-e5-navbar.json' ]
+	[ 'luci/menu.json', '/usr/share/luci/menu.d/luci-app-zz-e5-navbar.json' ],
+	[ 'luci/acl.json', '/usr/share/rpcd/acl.d/luci-app-e5-navbar.json' ]
 ];
 const BEGIN = '    /* BEGIN e5-navbar';
 const END = '    /* END e5-navbar */\n';
@@ -86,13 +87,13 @@ return function(ctx) {
 			changed = true;
 		}
 		if (changed) {
-			ctx.run('rm -rf /tmp/luci-indexcache* /tmp/luci-modulecache');
+			ctx.run('rm -rf /tmp/luci-indexcache* /tmp/luci-modulecache; /etc/init.d/rpcd reload >/dev/null 2>&1');
 			ctx.log('LuCI bottom bar tab: the navbar page');
 		}
 	}
 
 	function luci_remove() {
-		ctx.run(`rm -f '${LUCI[0][1]}' '${LUCI[1][1]}'; rmdir /www/luci-static/resources/view/e5-navbar 2>/dev/null; ` +
+		ctx.run(`rm -f '${LUCI[0][1]}' '${LUCI[1][1]}' '${LUCI[2][1]}'; rmdir /www/luci-static/resources/view/e5-navbar 2>/dev/null; ` +
 			'rm -rf /tmp/luci-indexcache* /tmp/luci-modulecache');
 	}
 

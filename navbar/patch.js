@@ -27,6 +27,9 @@
         return navbarAll;
     }
     setInterval(e5NavbarAll, 30000);
+    // a setting changed on the screen (高级 or the app's page): asked again now,
+    // and the bar rebuilt at once instead of within 30 s
+    window.e5NavbarRefresh = function () { navbarAt = -Infinity; e5NavbarAll(); };
     // With all nine the screen's own 高级 -> 底部导航 (its five nav_slot ones,
     // category "navigation") sets nothing that shows: out of the 高级 list
     // while all nine show, back in its place with five.  The list as app.js
@@ -48,6 +51,18 @@
     // (app.js comes after this file: its pageRead is there once the page has loaded)
     window.addEventListener('DOMContentLoaded', () => {
         try {
+            // (高级's save: the bar's setting -- navbar_mode where the system shows it,
+            // mode in the app's own category -- rebuilds the bar now)
+            const post = window.stPost;
+            if (typeof post == 'function') window.stPost = async function (v, body) {
+                const r = await post.apply(this, arguments);
+                try {
+                    const cat = v && v.cat && v.cat.id;
+                    if (r && r.ok && body && (body.id === 'navbar_mode' || (cat === 'plugin:navbar' && body.id === 'mode')))
+                        window.e5NavbarRefresh();
+                } catch (e) {}
+                return r;
+            };
             const read = window.pageRead;
             if (typeof read != 'function') return;
             window.pageRead = function (path) {

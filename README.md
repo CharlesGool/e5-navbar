@@ -4,7 +4,7 @@
 
 *All nine pages in the bottom bar*
 
-容悦 E5（OpenWrt）信息屏应用。当前版本 **v1.4**，应用 ID `navbar`。
+容悦 E5（OpenWrt）信息屏应用。当前版本 **v1.5**，应用 ID `navbar`。
 
 ## 截图
 
@@ -37,6 +37,7 @@
 
 ## 版本
 
-- [v1.4](releases/navbar-v1.4.tar.gz)（当前）
+- [v1.5](releases/navbar-v1.5.tar.gz)（当前）：屏幕上改「底部导航显示」后立即重排导航栏；LuCI 的「底部导航」页直接读写这个设置（9 个 / 5 个），不再依赖应用列表
+- [v1.4](releases/navbar-v1.4.tar.gz)
 - [v1.3](releases/navbar-v1.3.tar.gz)
 - [v1.0](releases/navbar-v1.0.tar.gz)
